@@ -99,7 +99,7 @@ async fn main() {
                 let ctx_clone = Arc::clone(&shared_ctx); // Clone the Arc for use inside the closure
 
                 let news_update_job =
-                    Job::new_repeated_async(Duration::from_secs(60*60), move |_uuid, _l| {
+                    Job::new_repeated_async(Duration::from_secs(60), move |_uuid, _l| {
                         let ctx = Arc::clone(&ctx_clone); // Clone again inside the closure
 
                         Box::pin(async move {
@@ -125,6 +125,19 @@ async fn main() {
                                 .unwrap_or_else(|| String::from("Unknown"));
 
                             let channel_id = serenity::ChannelId(1143749967706603602);
+
+                            let prev_news = channel_id.messages(&ctx, |retriever| {
+                                retriever.limit(1)
+                            }).await.unwrap();
+                            let prev_news = prev_news.get(0).unwrap();
+                            let prev_news = prev_news.embeds.get(0).unwrap().clone();
+
+                            if prev_news.title.unwrap() == story_title {
+                                println!("No new news");
+                                return
+                            }
+
+
                             channel_id
                                 .send_message(&ctx, |m| {
                                     m.embed(|emb| {
