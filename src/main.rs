@@ -115,47 +115,25 @@ async fn main() {
 
                             let story = content_channel.items[0].clone();
 
-                            let story_title = story.title.clone().unwrap();
-                            let story_description = story.description.clone().unwrap();
-                            let story_link = story.link.clone().unwrap();
-
-                            let creator = story
-                                .dublin_core_ext() // Dublin Core extension may contain the creator
-                                .and_then(|dc| dc.creators.get(0).cloned())
-                                .unwrap_or_else(|| String::from("Unknown"));
+                            let story_link = story.link.unwrap();
 
                             let channel_id = serenity::ChannelId(1143749967706603602);
 
-                            let prev_news = channel_id.messages(&ctx, |retriever| {
-                                retriever.limit(1)
-                            }).await.unwrap();
-                            let prev_news = prev_news.get(0).unwrap();
-                            let prev_news = prev_news.embeds.get(0).unwrap().clone();
-
-                            if prev_news.title.unwrap() == story_title {
-                                println!("No new news");
-                                return
-                            }
-
-
-                            channel_id
-                                .send_message(&ctx, |m| {
-                                    m.embed(|emb| {
-                                        emb.title(story_title);
-                                        emb.description(story_description);
-                                        emb.url(story_link);
-                                        emb.thumbnail("https://cloudfront-eu-central-1.images.arcpublishing.com/dlnews/BJHFLDCZ3NCGRA7FGWFZZWPFLQ.png");
-                                        emb.color(0x0000FF);
-                                        emb.footer(|f| {
-                                            f.text(format!("By {}", creator));
-                                            f
-                                        });
-                                        emb
-                                    });
-                                    m
-                                })
+                            let prev_news = channel_id
+                                .messages(&ctx, |retriever| retriever.limit(1))
                                 .await
                                 .unwrap();
+                            let prev_news = prev_news.get(0).unwrap();
+
+                            if prev_news.content == story_link {
+                                println!("No new news");
+                                return;
+                            }
+
+                            match channel_id.say(ctx, story_link).await {
+                                Ok(_) => println!("Posted news"),
+                                Err(e) => println!("Error posting news: {}", e),
+                            };
                         })
                     })
                     .unwrap();
