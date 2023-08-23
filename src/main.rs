@@ -99,7 +99,7 @@ async fn main() {
                 let ctx_clone = Arc::clone(&shared_ctx); // Clone the Arc for use inside the closure
 
                 let news_update_job =
-                    Job::new_repeated_async(Duration::from_secs(60 * 15), move |_uuid, _l| {
+                    Job::new_repeated_async(Duration::from_secs(60*60), move |_uuid, _l| {
                         let ctx = Arc::clone(&ctx_clone); // Clone again inside the closure
 
                         Box::pin(async move {
@@ -131,8 +131,8 @@ async fn main() {
                                         emb.title(story_title);
                                         emb.description(story_description);
                                         emb.url(story_link);
-                                        emb.thumbnail("https://www.dlnews.com/wp-content/uploads/2019/12/Daily-Logo-1.png");
-                                        emb.color(0x00FF00);
+                                        emb.thumbnail("https://cloudfront-eu-central-1.images.arcpublishing.com/dlnews/BJHFLDCZ3NCGRA7FGWFZZWPFLQ.png");
+                                        emb.color(0x0000FF);
                                         emb.footer(|f| {
                                             f.text(format!("By {}", creator));
                                             f

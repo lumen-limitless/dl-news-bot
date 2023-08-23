@@ -7,8 +7,6 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.75"
-chrono = "0.4.26"
-colour = "0.7.0"
 cron = "0.12.0"
 dotenv = "0.15.0"
 env_logger = "0.10.0"
