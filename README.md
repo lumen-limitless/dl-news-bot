@@ -1,1 +1,1 @@
-This bot fetches the latest crypto news from https://www.dlnews.com/ and sends an embed in the specificied channel at specified intervals.
+This bot fetches the latest crypto news from https://www.dlnews.com/ and sends a message with the link to the channel at specified intervals.
